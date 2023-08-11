@@ -15,19 +15,16 @@ import BlogDirectus from "./BlogDirectus";
 export default function Blog() {
   const [blogPost, setBlogPost] = useState<any[]>([]);
 
+  function Test(x: any){
+    return "Monika";
+  }
+
   useEffect(() => {
     BlogDirectus()
       .then((res) => {
-        //console.log(res.data.data);
+        console.log(res.data.data);
         const data = res.data.data;
         setBlogPost(data);
-        for (let i in data) {
-          for (let y in data[i].category_type) {
-            console.log(
-              data[i].category_type[y].Post_category_id.Category_type
-            );
-          }
-        }
       })
       .catch((error) => console.log(error));
   }, []);
@@ -59,18 +56,33 @@ export default function Blog() {
       <div className="flex flex-wrap justify-center">
         {blogPost.map((post, index) => {
           return (
-            <div key={index}>
-              <p>{post.Post_title}</p>
-              <Link href={"/blog/" + post.post_slug}>Link</Link>
-              {post.category_type.map((category: any) => {
-                return (
-                  <ul key={category.id}>
-                    <li>{category.Post_category_id.Category_type}</li>
-                  </ul>
-                );
-              })}
+            <Link key={index} href={"/blog/" + post.post_slug}>
+            <div className="max-w-[424px] flex flex-col mx-6">
+              <Image src={
+                    "https://admin.i-design.com.pl/assets/" + post.Post_photo.id
+                  } width={424} height={223} alt={post.Post_photo.id}></Image>
+              <div className="px-6 py-4 flex flex-col">
+                <div className="flex">
+                    {post.category_type.map((category: any) => {
+                    return (
+                        <ul key={category.id}>
+                          <li className="px-6 mr-1 py-2 rounded-full border border-blue/600 font-semibold text-sm">{category.Post_category_id.Category_type}</li>
+                        </ul>
+                    );
+                  })}
+                </div>
+              <p className="text-2xl font-semibold my-2">{post.Post_title}</p>
+              <div className="flex font-normal text-xl">
+                <p>{Test(post.post_author)} </p>
+                <span className="mx-1">|</span>
+                <p> {post.date_created.slice(8,10)}-{post.date_created.slice(5,7)}-{post.date_created.slice(0,4)}</p>
+              </div>
+              </div>
+              
             </div>
+            </Link>
           );
+          
         })}
       </div>
       <button className="self-center py-4 px-9 text-blue/600 rounded-full border w-[197px] font-semibold border-blue/600 screen620:mt-16 mt-1">

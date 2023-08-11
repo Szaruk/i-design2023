@@ -9,7 +9,7 @@ const navLinks = [
   { name: "Konferencja", href: "/" },
   { name: "Partnerzy", href: "/" },
   { name: "Poprzednia edycja", href: "/" },
-  { name: "Strefa wiedzy", href: "/" },
+  { name: "Strefa wiedzy", href: "/blog" },
   { name: "O nas", href: "/about_us" },
   { name: "Kontakt", href: "/contact" },
   { name: "Kup bilet", href: "/" },
@@ -124,7 +124,7 @@ export default function Nav() {
             alt="dot"
             className="mr-2 invisible group-hover/link:visible "
           />
-          <Link href="/" className="mr-10  hover:text-Button">
+          <Link href="/blog" className="mr-10  hover:text-Button">
             Strefa wiedzy
           </Link>
         </li>
@@ -209,7 +209,7 @@ export default function Nav() {
             alt="dot"
             className="mr-2 invisible group-hover/link:visible "
           />
-          <Link href="/" className="mr-10  hover:text-Button">
+          <Link href="/blog" className="mr-10  hover:text-Button">
             Strefa wiedzy
           </Link>
         </li>
