@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+
 import { useState, useEffect } from "react";
 
 const categoryPosts = [
@@ -15,14 +16,37 @@ import BlogDirectus from "./BlogDirectus";
 export default function Blog() {
   const [blogPost, setBlogPost] = useState<any[]>([]);
 
-  function Test(x: any){
-    return "Monika";
+  function GetCurrentData(x: any) {
+    if (x === "01") {
+      return "Stycznia";
+    } else if (x === "02") {
+      return "Lutego";
+    } else if (x === "03") {
+      return "Marca";
+    } else if (x === "04") {
+      return "Kwietnia";
+    } else if (x === "05") {
+      return "Maja";
+    } else if (x === "06") {
+      return "Czerwca";
+    } else if (x === "07") {
+      return "Lipca";
+    } else if (x === "08") {
+      return "Sierpnia";
+    } else if (x === "09") {
+      return "Września";
+    } else if (x === "10") {
+      return "Października";
+    } else if (x === "11") {
+      return "Listopada";
+    } else if (x === "12") {
+      return "Grudnia";
+    }
   }
 
   useEffect(() => {
     BlogDirectus()
       .then((res) => {
-        console.log(res.data.data);
         const data = res.data.data;
         setBlogPost(data);
       })
@@ -57,32 +81,53 @@ export default function Blog() {
         {blogPost.map((post, index) => {
           return (
             <Link key={index} href={"/blog/" + post.post_slug}>
-            <div className="max-w-[424px] flex flex-col mx-6">
-              <Image src={
+              <div className="flex flex-col items-center screen603:w-[424px] max-w-[424px] screen620:mx-5 mx-0 mb-16">
+                <Image
+                  src={
                     "https://admin.i-design.com.pl/assets/" + post.Post_photo.id
-                  } width={424} height={223} alt={post.Post_photo.id}></Image>
-              <div className="px-6 py-4 flex flex-col">
-                <div className="flex">
+                  }
+                  width={424}
+                  height={223}
+                  alt={post.Post_photo.id}
+                ></Image>
+                <div className="px-6 py-4 flex flex-col">
+                  <div className="flex">
                     {post.category_type.map((category: any) => {
-                    return (
-                        <ul key={category.id}>
-                          <li className="px-6 mr-1 py-2 rounded-full border border-blue/600 font-semibold text-sm">{category.Post_category_id.Category_type}</li>
+                      return (
+                        <ul
+                          key={category.id}
+                          className="screen620:flex hidden mt-m-30.8 text-sm font-semibold leading-leading-1.3125 text-blue/600"
+                        >
+                          <li className="px-6 mr-1 py-2 rounded-full border border-blue/600 font-semibold text-sm">
+                            {category.Post_category_id.Category_type}
+                          </li>
                         </ul>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
+                  <p className="my-2 text-/-black screen620:text-xl text-1.1875 font-semibold leading-leading-1.8">
+                    {post.Post_title}
+                  </p>
+                  <div className="flex screen620:text-xl text-text-1.1875 font-normal leading-leading-1.875 text-/-black">
+                    <p>
+                      <span className="mr-1">
+                        {post.user_created.first_name}
+                      </span>
+                      <span>{post.user_created.last_name}</span>
+                    </p>
+                    <span className="mx-1">|</span>
+                    <p>
+                      {post.date_created.slice(8, 10)}
+                      <span className="mx-1">
+                        {GetCurrentData(post.date_created.slice(5, 7))}
+                      </span>
+                      {post.date_created.slice(0, 4)}
+                    </p>
+                  </div>
                 </div>
-              <p className="text-2xl font-semibold my-2">{post.Post_title}</p>
-              <div className="flex font-normal text-xl">
-                <p>{Test(post.post_author)} </p>
-                <span className="mx-1">|</span>
-                <p> {post.date_created.slice(8,10)}-{post.date_created.slice(5,7)}-{post.date_created.slice(0,4)}</p>
               </div>
-              </div>
-              
-            </div>
             </Link>
           );
-          
         })}
       </div>
       <button className="self-center py-4 px-9 text-blue/600 rounded-full border w-[197px] font-semibold border-blue/600 screen620:mt-16 mt-1">
