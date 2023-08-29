@@ -1,8 +1,14 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-
 import { useState, useEffect } from "react";
+
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Builder.io -  CMS",
+  description: "Build digital experiences for any tech stack, visually.",
+};
 
 const categoryPosts = [
   { id: 1, name: "Design" },
@@ -15,6 +21,8 @@ import BlogDirectus from "./BlogDirectus";
 
 export default function Blog() {
   const [blogPost, setBlogPost] = useState<any[]>([]);
+  const [categoryList, setCategoryList] = useState("ALL");
+  let numPosts = 6;
 
   function GetCurrentData(x: any) {
     if (x === "01") {
@@ -44,10 +52,21 @@ export default function Blog() {
     }
   }
 
-  useEffect(() => {
-    BlogDirectus()
+  function showMorePost() {
+    numPosts = numPosts + 1;
+    BlogDirectus(numPosts)
       .then((res) => {
         const data = res.data.data;
+        setBlogPost(data);
+      })
+      .catch((error) => console.log(error));
+  }
+
+  useEffect(() => {
+    BlogDirectus(numPosts)
+      .then((res) => {
+        const data = res.data.data;
+        console.log(data);
         setBlogPost(data);
       })
       .catch((error) => console.log(error));
@@ -67,7 +86,10 @@ export default function Blog() {
         <div className="flex w-full flex-wrap">
           {categoryPosts.map((category) => (
             <ul key={category.id}>
-              <li className="border screen620:mr-5 mr-3 mb-4 border-blue/600 rounded-full text-lg font-semibold py-4 px-9 cursor-pointer">
+              <li
+                id={category.name}
+                className="border screen620:mr-5 mr-3 mb-4 border-blue/600 rounded-full text-lg font-semibold py-4 px-9 cursor-pointer"
+              >
                 {category.name}
               </li>
             </ul>
@@ -81,15 +103,20 @@ export default function Blog() {
         {blogPost.map((post, index) => {
           return (
             <Link key={index} href={"/blog/" + post.post_slug}>
-              <div className="flex flex-col items-center screen603:w-[424px] max-w-[424px] screen620:mx-5 mx-0 mb-16">
-                <Image
-                  src={
-                    "https://admin.i-design.com.pl/assets/" + post.Post_photo.id
-                  }
-                  width={424}
-                  height={223}
-                  alt={post.Post_photo.id}
-                ></Image>
+              <div className="flex flex-col items-center screen603:w-[424px] max-w-[424px] screen620:mx-5 mx-0 mb-16 rounded-xl">
+                <div className="max-h-[223px] overflow-hidden rounded-xl flex justify-center items-center">
+                  <Image
+                    src={
+                      "https://admin.i-design.com.pl/assets/" +
+                      post.Post_photo.id
+                    }
+                    width={424}
+                    height={223}
+                    alt={post.Post_photo.id}
+                    className="rounded-xl"
+                  ></Image>
+                </div>
+
                 <div className="px-6 py-4 flex flex-col">
                   <div className="flex">
                     {post.category_type.map((category: any) => {
@@ -130,7 +157,10 @@ export default function Blog() {
           );
         })}
       </div>
-      <button className="self-center py-4 px-9 text-blue/600 rounded-full border w-[197px] font-semibold border-blue/600 screen620:mt-16 mt-1">
+      <button
+        onClick={showMorePost}
+        className="self-center py-4 px-9 text-blue/600 rounded-full border w-[197px] font-semibold border-blue/600 screen620:mt-16 mt-1"
+      >
         Zobacz więcej
       </button>
       <h3 className="text-/-black font-semibold text-4xl leading-leading-3.15 mt-16 mb-8">

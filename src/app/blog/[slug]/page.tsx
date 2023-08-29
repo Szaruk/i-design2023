@@ -1,13 +1,27 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import "@/app/postDetails.css";
 import PostDetailsDirectus from "./PostDetailsDirectus";
 import AnotherPost from "./AnotherPost";
+import type { Metadata } from "next";
+
+/*
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  
+}
+*/
 
 export default function PostDetails({ params }: { params: { slug: string } }) {
   const [postDetails, setPostDetails] = useState<any[]>([]);
   const [anotherPost, setAnotherPost] = useState<any[]>([]);
+  const [postCategory, setPostCategory] = useState<any[]>([]);
+  const [anotherPostArr, setAnotherPostArr] = useState<any[]>([]);
 
   function GetCurrentData(x: any) {
     if (x === "01") {
@@ -36,14 +50,41 @@ export default function PostDetails({ params }: { params: { slug: string } }) {
       return "Grudnia";
     }
   }
+  function TestAnother() {
+    AnotherPost().then((res) => {
+      const anotherPostsList = res.data.data;
+      const test: any[] = [];
+      anotherPostsList.map((another: any) => {
+        another.category_type.map((anotherCategory: any) => {
+          postCategory.map((postDetailCategory: any) => {
+            if (
+              anotherCategory.Post_category_id.Category_type ===
+              postDetailCategory
+            ) {
+              test.push(another);
+              setAnotherPostArr(test);
+              setAnotherPost(anotherPostArr);
+            }
+            console.log(test);
+          });
+        });
+      });
+    });
+  }
 
   useEffect(() => {
+    const categoryArr: any[] = [];
     PostDetailsDirectus(params.slug).then((res) => {
       setPostDetails(res.data.data);
+      res.data.data.map((postDetails: any) => {
+        postDetails.category_type.map((categoryDetails: any) => {
+          categoryArr.push(categoryDetails.Post_category_id.Category_type);
+          setPostCategory(categoryArr);
+        });
+      });
     });
-    AnotherPost().then((res) => {
-      setAnotherPost(res.data.data);
-    });
+    TestAnother();
+    console.log(anotherPostArr);
   }, []);
 
   return (
@@ -79,8 +120,8 @@ export default function PostDetails({ params }: { params: { slug: string } }) {
               </div>
               <div className="flex items-center flex-wrap screen875:hidden mt-2">
                 <span className="w-8 h-8 bg-blue/500 rounded-full"></span>
-                <span className="mx-1">{details.user_created.first_name}</span>
-                <span className="mr-1">{details.user_created.last_name}</span>
+                <span className="mx-1">{details.post_author.first_name}</span>
+                <span className="mr-1">{details.post_author.last_name}</span>
                 <span className="mx-1">|</span>
                 <p>
                   {details.date_created.slice(8, 10)}
@@ -93,16 +134,19 @@ export default function PostDetails({ params }: { params: { slug: string } }) {
               <h1 className="screen875:text-5xl text-2xl text-blue/600 font-bold mt-2 mb-6 max-w-[811px]">
                 {details.Post_title}
               </h1>
-              <Image
-                src={
-                  "https://admin.i-design.com.pl/assets/" +
-                  details.Post_photo.id
-                }
-                width={811}
-                height={400}
-                alt={details.Post_photo.id}
-                className="rounded-xl"
-              ></Image>
+              <div className="rounded-xl max-h-[400px] overflow-hidden flex justify-center items-center">
+                <Image
+                  src={
+                    "https://admin.i-design.com.pl/assets/" +
+                    details.Post_photo.id
+                  }
+                  width={811}
+                  height={400}
+                  alt={details.Post_photo.id}
+                  className="rounded-xl"
+                ></Image>
+              </div>
+
               <div
                 className="max-w-[811px] mt-6 post-text"
                 dangerouslySetInnerHTML={{ __html: details.Text_post }}
@@ -118,21 +162,8 @@ export default function PostDetails({ params }: { params: { slug: string } }) {
         Do przeczytania
       </h3>
       <div className="flex flex-wrap">
-        {anotherPost.map((another) => (
-          <div key={another.id} className="flex flex-col max-w-[429px]">
-            <Image
-              src={
-                "https://admin.i-design.com.pl/assets/" + another.Post_photo.id
-              }
-              width={429}
-              height={255}
-              alt={another.Post_photo.id}
-              className="rounded-xl"
-            ></Image>
-            <p className="mt-5 mb-20 font-semibold text-2xl text/-black">
-              {another.Post_title}
-            </p>
-          </div>
+        {anotherPost.map((test) => (
+          <p>{test.id}</p>
         ))}
       </div>
       <h3 className="w-full mt-24 px-1 text-black font-semibold screen875:text-size-2.125 text-2xl mb-6">

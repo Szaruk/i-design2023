@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
 
 import SocialResponsibility from "./socialResponsibilityDirectus";
 import OurValues from "./ourValuesDirectus";
-import { error } from "console";
+
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Builder.io - Visual Headless CMS",
+  description: "Build digital experiences for any tech stack, visually.",
+};
 
 export default function AboutUs() {
   const [socialResponsibilityData, setsocialResponsibilityData] = useState<
@@ -344,7 +350,7 @@ export default function AboutUs() {
             alt="circles-img"
           ></Image>
         </picture>
-        <div className="flex relative z-10 ">
+        <div className=" relative z-10 hidden">
           <picture className="w-20 h-20 rounded-full border-4 border-gray/200 bg-black z-10 overflow-hidden">
             <Image
               src="/monika-circle.png"

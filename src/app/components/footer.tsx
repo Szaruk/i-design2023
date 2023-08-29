@@ -1,7 +1,10 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import FooterDirectus from "./FooterDirectus";
+import { error } from "console";
+
 const footerNav = [
   { id: 0, name: "Partnerzy", href: "#" },
   { id: 1, name: "Strefa wiedzy", href: "#" },
@@ -33,6 +36,8 @@ const socialIcon = [
 ];
 
 const Footer = () => {
+  const [footerElement, setFooterElements] = useState<any[]>([]);
+
   const GetCurrentYear = () => {
     const date = new Date();
     let dateYear = date.getFullYear();
@@ -40,29 +45,45 @@ const Footer = () => {
   };
 
   useEffect(() => {
+    FooterDirectus()
+      .then((res) => {
+        setFooterElements(res.data.data);
+      })
+      .catch((error) => console.log(error));
+
     const arrowUp = document.querySelector("#arrow-up");
     arrowUp?.addEventListener("click", () => {
       window.scrollTo(0, 0);
     });
-  });
+  }, []);
 
   return (
     <footer className="bg-FooterBg xl:pt-16 pb-10 z-40 relative flex flex-col sm:pt-24">
       <div className="flex justify-between xl:flex-row sm:flex-col">
-        <div className="flex flex-col xl:px-14 sm:px-4">
-          <Image
-            src="./footer-logo.svg"
-            width={134}
-            height={22}
-            alt="I-design logo footer"
-          />
-          <ul className="text-FooterColor font-normal text-xl mt-8 leading-8">
-            <li>Stowarzyszenie I Design</li>
-            <li>NIP: 894-316-75-68</li>
-            <li>ul. Drzewieckiego 10/1, 54-129</li>
-            <li>Wrocław</li>
-          </ul>
-        </div>
+        {footerElement.map((footerElements) => {
+          return (
+            <div
+              key={footerElements.id}
+              className="flex flex-col xl:px-14 sm:px-4"
+            >
+              <Image
+                src={
+                  "https://admin.i-design.com.pl/assets/" +
+                  footerElements.Footer_logo.filename_disk
+                }
+                width={134}
+                height={22}
+                alt={footerElements.Footer_logo.title}
+              />
+              <ul className="text-FooterColor font-normal text-xl mt-8 leading-8">
+                <li>Stowarzyszenie I Design</li>
+                <li>NIP: 894-316-75-68</li>
+                <li>ul. Drzewieckiego 10/1, 54-129</li>
+                <li>Wrocław</li>
+              </ul>
+            </div>
+          );
+        })}
         <div className="flex justify-between xl:px-14 xl:flex-row xl:mt-0 sm:flex-col sm:border-b xl:border-b-0 sm:mt-24 sm:px-4">
           <ul className="mr-28 text">
             <li className="text-FooterColor mb-8 font-normal w-max pl-4 xl:-ml-0 sm:-ml-1 ">
@@ -111,28 +132,44 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-          <Image
-            className="self-start ml-20 hover:cursor-pointer xl:relative sm:absolute sl:right-0 xl:-top-0 sm:right-4 sm:-top-0 xl:mt-0 sm:mt-4"
-            src="./footer-arrow.svg"
-            width={50}
-            height={50}
-            alt="footer arrow"
-            id="arrow-up"
-          />
+          {footerElement.map((footerArrow) => {
+            return (
+              <div key={footerArrow.id}>
+                <Image
+                  className="bg-white p-2 rounded-full self-start ml-20 hover:cursor-pointer xl:relative sm:absolute sl:right-0 xl:-top-0 sm:right-4 sm:-top-0 xl:mt-0 sm:mt-4"
+                  src={
+                    "https://admin.i-design.com.pl/assets/" +
+                    footerArrow.Arrow_icon_footer.filename_disk
+                  }
+                  width={50}
+                  height={50}
+                  alt={footerArrow.Arrow_icon_footer.title}
+                  id="arrow-up"
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
       <div className="flex mt-24 xl:pl-14 xl:pb-28 xl:border-b xl:relative sm:absolute sm:top-52 xl:top-0 sm:border-b-0 xl:px-0 sm:px-4">
-        {socialIcon.map((item) => (
-          <Link key={item.id} href={item.href}>
-            <Image
-              className="mr-6"
-              src={item.name}
-              width={44}
-              height={44}
-              alt={item.alt}
-            />
-          </Link>
-        ))}
+        {footerElement.map((footerSocials) => {
+          return footerSocials.Social_links.map((socials: any) => {
+            return (
+              <Link key={socials.id} href={socials.Footer_socials_id.Icon_link}>
+                <Image
+                  className="mr-6"
+                  src={
+                    "https://admin.i-design.com.pl/assets/" +
+                    socials.Footer_socials_id.Social_icon.filename_disk
+                  }
+                  width={44}
+                  height={44}
+                  alt={socials.Footer_socials_id.Social_title}
+                />
+              </Link>
+            );
+          });
+        })}
       </div>
 
       <div className="xl:flex justify-between">
